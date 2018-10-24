@@ -5,25 +5,44 @@ import {map} from 'rxjs/operators'
 import Swal from 'sweetalert2'
 import { User } from './user.model';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { Store } from '@ngrx/store';
+import { AppState } from '../app.reducer';
+import { ActivarLoadingAction, DesactivarLoadingAction } from '../shared/ui.accions';
+import { SetUserAction } from './auth.accions';
+import { Subscription } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
-  constructor( private auth:AngularFireAuth,private router:Router,private db:AngularFirestore) { }
+subcripction:Subscription=new Subscription()
+  constructor( private auth:AngularFireAuth,private router:Router,
+               private db:AngularFirestore,
+               private store:Store<AppState>
+     
+  
+  )
+    
+    { }
 
 
 escucharUsuariosLogeados(){
   this.auth.authState.subscribe(fbUser=>{
-    console.log(fbUser);
-    
+      if(fbUser){
+        this.subcripction=this.db.doc(`${fbUser.uid}/usuario`).valueChanges().subscribe((usuarioObj:any )=>{
+            const newUser=new User(usuarioObj)
+            console.log(newUser)
+            this.store.dispatch(new SetUserAction(newUser))
+        })
+      }else{
+        this.subcripction.unsubscribe()
+      }
   })
 }
 
 
 
   crearUsuario(datos){
-
+  this.store.dispatch(new ActivarLoadingAction())
     this.auth.auth.createUserWithEmailAndPassword(datos.email,datos.password)
     .then(resp=>{
       const user:User={
@@ -35,9 +54,11 @@ escucharUsuariosLogeados(){
       .set(user).then(()=>{
         
         this.router.navigate(['/'])
+        this.store.dispatch(new DesactivarLoadingAction())
       
       })
     }).catch(err=>{
+      this.store.dispatch(new DesactivarLoadingAction())
       Swal('Error en registro',err.message,'error')
     })
 
@@ -45,11 +66,14 @@ escucharUsuariosLogeados(){
 
 
   login(datos){
+    this.store.dispatch(new ActivarLoadingAction())
     this.auth.auth.signInWithEmailAndPassword(datos.email,datos.password)
     .then(res=>{
       this.router.navigate(['/dashboard'])
+        this.store.dispatch(new DesactivarLoadingAction())
     }).catch(err=>{
       Swal('Error en el login',err.message,'error')
+        this.store.dispatch(new DesactivarLoadingAction())
     })
   }
 
