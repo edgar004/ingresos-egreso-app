@@ -18,6 +18,13 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
 
+
+import { FormsModule} from '@angular/forms'
+
+import  { AngularFireModule} from 'angularfire2'
+import { AngularFirestoreModule} from 'angularfire2/firestore'
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { environment } from '../environments/environment.prod';
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,7 +40,11 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutinModule
+    AppRoutinModule,
+    FormsModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule,
+    AngularFireAuthModule
   ],
   providers: [],
   bootstrap: [AppComponent]
