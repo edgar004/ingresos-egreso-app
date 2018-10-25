@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppState } from '../../app.reducer';
-
+import *  as fromIngresoEgreso from '../ingreso-egreso.reducer'
 @Component({
   selector: 'app-estadistica',
   templateUrl: './estadistica.component.html',
@@ -9,7 +8,7 @@ import { AppState } from '../../app.reducer';
 })
 export class EstadisticaComponent implements OnInit {
 
-  constructor( private store:Store<AppState>) { }
+  constructor( private store:Store<fromIngresoEgreso.AppState>) { }
 ingresos:number
 egresos:number
 

@@ -7,6 +7,8 @@ import { AppState } from '../app.reducer';
 import { ActivarLoadingAction, DesactivarLoadingAction } from '../shared/ui.accions';
 import { Subscription } from 'rxjs';
 
+
+import * as fromIngresoEgreso from '../ingreso-egreso/ingreso-egreso.reducer'
 @Component({
   selector: 'app-ingreso-egreso',
   templateUrl: './ingreso-egreso.component.html',
@@ -17,7 +19,7 @@ forma:FormGroup
 tipo='ingreso'
 loadingSubs:Subscription=new Subscription()
 cargando:boolean
-  constructor(private ingresoService:IngresoEgresoService,private store:Store<AppState>) { }
+  constructor(private ingresoService:IngresoEgresoService,private store:Store<fromIngresoEgreso.AppState>) { }
 
   ngOnInit() {
     this.loadingSubs=this.store.select('ui').subscribe(ui=>{

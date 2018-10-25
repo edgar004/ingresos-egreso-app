@@ -5,6 +5,7 @@ import { IngresoEgreso } from '../ingreso-egreso.model';
 import { Subscription } from 'rxjs';
 import { IngresoEgresoService } from '../ingreso-egreso.service';
 
+import *  as fromIngresoEgreso from '../ingreso-egreso.reducer'
 @Component({
   selector: 'app-datalle',
   templateUrl: './datalle.component.html',
@@ -13,7 +14,7 @@ import { IngresoEgresoService } from '../ingreso-egreso.service';
 export class DatalleComponent implements OnInit,OnDestroy {
 detalles:any[]=[]
 subscription:Subscription=new Subscription()
-  constructor(private store:Store<AppState>,
+  constructor(private store:Store<fromIngresoEgreso.AppState>,
               private ingresoEgresoService:IngresoEgresoService) {
 
 
