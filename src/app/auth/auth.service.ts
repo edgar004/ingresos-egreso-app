@@ -8,16 +8,19 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.reducer';
 import { ActivarLoadingAction, DesactivarLoadingAction } from '../shared/ui.accions';
-import { SetUserAction } from './auth.accions';
+import { SetUserAction, UnsetUserAction } from './auth.accions';
 import { Subscription } from 'rxjs';
+import { IngresoEgresoService } from '../ingreso-egreso/ingreso-egreso.service';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 subcripction:Subscription=new Subscription()
+usuario:any
   constructor( private auth:AngularFireAuth,private router:Router,
                private db:AngularFirestore,
-               private store:Store<AppState>
+               private store:Store<AppState>,
+              // private itemsService:IngresoEgresoService
      
   
   )
@@ -30,8 +33,8 @@ escucharUsuariosLogeados(){
       if(fbUser){
         this.subcripction=this.db.doc(`${fbUser.uid}/usuario`).valueChanges().subscribe((usuarioObj:any )=>{
             const newUser=new User(usuarioObj)
-            console.log(newUser)
             this.store.dispatch(new SetUserAction(newUser))
+            this.usuario=newUser
         })
       }else{
         this.subcripction.unsubscribe()
@@ -80,6 +83,8 @@ escucharUsuariosLogeados(){
   logout(){
     this.router.navigate(['/login'])
     this.auth.auth.signOut()
+    this.store.dispatch(new UnsetUserAction())
+    //this.itemsService.cancelarSubscription()
   }
 
   validarAuth(){
@@ -90,5 +95,10 @@ escucharUsuariosLogeados(){
 
       return user!=null
     }))
+  }
+
+
+  getUsuer(){
+    return {...this.usuario}
   }
 }
